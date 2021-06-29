@@ -1,6 +1,7 @@
 import random as rnd
 import prettytable
 
+POPULATION_SIZE = 9
 class Data:
     ROOMS = [["R1", 25], ["R2", 45], ["R3", 35]]
     MEETING_TIMES = [["MT1", "MWF 09.00 - 10.00"],
@@ -29,9 +30,9 @@ class Data:
         course7 = Course("C7", "303L", [self._instructors[1], self._instructors[3]], 45)
         self._courses = [course1, course2, course3, course4, course5, course6, course7]
 
-        dept1 = Departement["MATH", [course1, course2]]
-        dept2 = Departement["EE", [course2, course4, course5]]
-        dept3 = Departement["PHY", [course6, course7]]
+        dept1 = Departement("MATH", [course1, course2])
+        dept2 = Departement("EE", [course2, course4, course5])
+        dept3 = Departement("PHY", [course6, course7])
         self._depts = [dept1, dept2, dept3]
 
         self._numberOfClasses = 0
@@ -64,7 +65,7 @@ class Schedule:
         depts = self._data.get_depts()
         for i in range(0, len(depts)):
             courses = depts[i].get_courses()
-            for j in range(j, len(courses)):
+            for j in range(0, len(courses)):
                 newClass = Class(self._classNumb, depts[i], courses[j])
                 self._classNumb += 1
                 newClass.set_meetingTime(data.get_meetingTimes()[rnd.randrange(0, len(data.get_meetingTimes()))])
@@ -100,15 +101,15 @@ class Population:
 class GeneticAlgorithm:
     ''' '''
 class Course:
-    def __init__(self, number, name, maxNumbOfStudents, instructors):
+    def __init__(self, number, name, instructors, maxNumbOfStudents):
         self._number = number
         self._name = name
-        self._maxNumbOfStudents = maxNumbOfStudents
         self._instructors = instructors
+        self._maxNumbOfStudents = maxNumbOfStudents
     def get_number(self): return self._number
     def get_name(self): return self._name
-    def get_maxNumbOfStudents(self): return self._maxNumbOfStudents
     def get_instructors(self): return self._instructors
+    def get_maxNumbOfStudents(self): return self._maxNumbOfStudents
     def __str__(self): return self._name
 class Instructor:
     def __init__(self, id, name):
@@ -161,7 +162,7 @@ class DisplayMgr:
         self.print_dept()
         self.print_course()
         self.print_room()
-        self.print_instuctor()
+        self.print_instructor()
         self.print_meeting_times()
     def print_dept(self):
         depts = data.get_depts()
@@ -180,11 +181,11 @@ class DisplayMgr:
         for i in range(len(courses)):
             instructors = courses[i].get_instructors()
             tempStr = ""
-            for j in range(0, len(courses) - 1):
+            for j in range(0, len(instructors) - 1):
                 tempStr += instructors[j].__str__() + ", "
-            tempStr += instructors[len(courses) - 1].__str__() + ", "
+            tempStr += instructors[len(instructors) - 1].__str__()
             availableCoursesTable.add_row(
-                [courses[i].get_number(), courses[i].get_name(), str(courses[i].get_maxNumberOfStudents()), tempStr])
+                [courses[i].get_number(), courses[i].get_name(), str(courses[i].get_maxNumbOfStudents()), tempStr])
         print(availableCoursesTable)
     def print_instructor(self):
         availableInstructorsTable = prettytable.PrettyTable(['id', 'instructor'])
@@ -231,3 +232,11 @@ class DisplayMgr:
         print(table)
 
 data = Data()
+displayMgr = DisplayMgr()
+displayMgr.print_available_data()
+generationNumber = 0
+print("\n> Generation # " + str(generationNumber))
+population = Population(POPULATION_SIZE)
+population.get_schedules().sort(key=lambda x: x.get_fitness(), reverse=True)
+displayMgr.print_generation(population)
+displayMgr.print_schedule_as_table(population.get_schedules()[0])
