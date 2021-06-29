@@ -9,7 +9,7 @@ class Data:
                    ["I3", "Dr. Steve Day"],
                    ["I4", "Mrs. Jane Doe"]]
     def __init__(self):
-        self._rooms = []; self._meetingTimes []; self._instructors = []
+        self._rooms = []; self._meetingTimes = []; self._instructors = []
         for i in range(0, len(self.ROOMS)):
             self._rooms.append(Room(self.ROOMS[i][0], self.ROOMS[i][1]))
         for i in range(0, len(self.MEETING_TIMES)):
@@ -24,6 +24,22 @@ class Data:
         course5 = Course("C5", "360C", [self._instructors[3]], 35)
         course6 = Course("C6", "303K", [self._instructors[0], self._instructors[2]], 45)
         course7 = Course("C7", "303L", [self._instructors[1], self._instructors[3]], 45)
+        self._courses = [course1, course2, course3, course4, course5, course6, course7]
+
+        dept1 = Departement["MATH", [course1, course2]]
+        dept2 = Departement["EE", [course2, course4, course5]]
+        dept3 = Departement["PHY", [course6, course7]]
+        self._depts = [dept1, dept2, dept3]
+
+        self._numberOfClasses = 0
+        for i in range (0, len(self._depts)):
+            self._numberOfClasses =+ len(self._depts[i].get_courses())
+    def get_rooms(self): return self._rooms
+    def get_meetingTimes(self): return self._meetingTimes
+    def get_instructors(self): return self._instructors
+    def get_courses(self): return self._courses
+    def get_depts(self): return self._depts
+    def get_numberOfClasses(self): return self._numberOfClasses
 class Schedule:
     ''' '''
 class Population:
